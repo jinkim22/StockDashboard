@@ -1,0 +1,17 @@
+{
+  "completed": "2021-11-03T02:50:24.477122Z",
+  "periodic": true,
+  "started": "2021-11-03T02:50:15.725494Z",
+  "versions": [
+    {
+      "filename": "setuptools-58.4.0-py3-none-any.whl",
+      "found_date": "2021-11-03T02:50:16.331010Z",
+      "release_date": "2021-11-01T02:41:04.000000Z"
+    },
+    {
+      "filename": "setuptools-58.3.0-py3-none-any.whl",
+      "found_date": "2021-11-03T02:50:22.563200Z",
+      "release_date": "2021-10-22T20:56:19.000000Z"
+    }
+  ]
+}
