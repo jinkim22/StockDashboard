@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Favorite Qurotes</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}" >
+  </head>
+  <body>
+    <br>
+
+
+      <div class="container theme-showcase" role="main"> <!-- move the position -->
+
+        <div style="color:#fff; background-color:orange", class="jumbotron">
+          <h1>Favorite Quotes</h1>
+        </div>
+        {% for r in result %}
+
+        <div style ="color:#fff;background-color:blue">
+        <h1>{{r.author}}</h1>
+        </div>
+         <div style ="color:#fff;font-size:28px;background-color:green">
+           <p>
+             {{r.quote}}
+             </p>
+             </div>
+            {% endfor %}
+            <!--
+    <h1>Hello World fg</h1>
+    {% if quote %}
+    <h2> {{quote }}</h2>
+    {% else %}
+    <h2> No variable quote here..</h2>
+    {% endif %}
+    <h2> My favorite fruits are: </h2>
+    <ul>
+      {% for fruit in fruits %}
+      <li>
+        {{fruit}}
+        </li>
+        {% endfor %}
+      </ul>
+      -->
+  </body>
+</html>
+
