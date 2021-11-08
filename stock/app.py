@@ -32,7 +32,7 @@ engine = create_engine(DATABASEURI)
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
 engine.execute("""CREATE TABLE IF NOT EXISTS traders (
-  id serial,
+  id serial primary key,
   username text,
   password text,
   trade_freq text
@@ -128,7 +128,11 @@ def login():
 @app.route("/portfolio", methods = ['GET','POST'])
 def portfolio():
     if 'logged' in session:
-        return render_template("portfolio.html")
+       # logins = True
+        row = g.conn.execute('SELECT * FROM portfolios WHERE user_id = %s',session['id'])
+       # account = row.fetchone()
+        print(row)
+        return render_template("portfolio.html",data = row, user_id = session['id'])
     else:
         return redirect(url_for('login'))
 
@@ -139,6 +143,26 @@ def logout():
     session.pop('username')
     return redirect(url_for('login'))
 
+@app.route("/createp",methods = ['GET','POST'])
+def createp():
+    return render_template("createp.html")
+
+@app.route("/insertp",methods = ['POST','GET'])
+def insertp():
+    if 'logged' in session:
+        name = request.form['name']
+        description = request.form['description']
+
+        g.conn.execute('INSERT INTO portfolios(name,description,user_id) VALUES (%s,%s,%s)',(name,description,session['id']))
+        return redirect(url_for('portfolio'))
+
+@app.route("/portfolio_contents", methods=['POST'])
+def portfolio_contents():
+    portfolio_id = request.form['portfolio_id']
+    row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %s',portfolio_id)
+
+    print("p_id",portfolio_id)
+    return render_template('list_company.html',portfolio_id = portfolio_id,data =row)
 if __name__ == "__main__":
   import click
 

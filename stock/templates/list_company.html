@@ -1,0 +1,17 @@
+
+{% extends 'prelogin.html' %}
+
+
+{% block content %}
+
+{% for r in data %}
+
+<h1>{{r['portfolio_id']}}</h1>
+<h1>{{r['ticker']}}</h1>
+<h1>{{r['stock_name']}}</h1>
+<h1>{{r['pe_ratio']}}</h1>
+<h1>{{r['number_of_shareds_owned']}}</h1>
+{% endfor %}
+
+
+{% endblock content %}

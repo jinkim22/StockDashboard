@@ -4,4 +4,80 @@
 
 {% block content %}
 <h4> This is portfolio </h4>
+
+
+<style>
+input[type=submit] {
+	color: #fff !important;
+	text-transform: uppercase;
+	text-decoration: none;
+	background: #60a3bc;
+	padding: 20px;
+	border-radius: 50px;
+	display: inline-block;
+	border: none;
+	transition: all 0.4s ease 0s;
+}
+
+input[type=submit]:hover {
+	text-shadow: 0px 0px 6px rgba(255, 255, 255, 1);
+	-webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+	-moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+	transition: all 0.4s ease 0s;
+}
+
+.border {
+	font-size: 1.0rem;
+	display: grid;
+	place-items: center;
+	min-height:50px;
+	border: 8px solid;
+	padding: 1rem;
+	background-color: coral;
+}
+.full-withradius {
+	position: relative;
+	background-color: #e3eaa7;
+
+	background-clip: padding-box;
+	border: solid 8px transparent;
+	border-radius: 2rem;
+
+}
+.full-withradius::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: -1;
+		margin: -8px; /* same as border width */
+		border-radius: inherit; /* inherit container box's radius */
+		background: linear-gradient(to left, turquoise, greenyellow);
+	}
+</style>
+<body>
+<form action="/createp" method="POST">
+
+
+<div class="button_cont" align="center">
+<input type="submit" value="CREATE A NEW PORTFOLIO" />
+</div>
+
+
+</form>
+
+
+{%for d in data %}
+<form action="/portfolio_contents" method="post">
+<div class="full-withradius border" style="width: 350px; float:left; height:350px; margin:10px">
+<h1>{{d['name']}}</h1>
+<p>{{d['description']}}</p>
+<input id="open" name="open" type="submit" value="Open" />
+<input id="port_contents" name="portfolio_id" type="hidden" value="{{d.portfolio_id}}" />
+</div>
+</form>
+{% endfor %}
+
 {% endblock %}
