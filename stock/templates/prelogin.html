@@ -64,13 +64,15 @@ body {
 <div class="header">
   <a href="#default" class="logo">StockDashboard</a>
   <div class="header-right">
-    <a class="active" href="#home">Home</a>
 
     {% if session['logged'] == True %}
+
+    <a class="active" href="{{url_for('portfolio')}}">Home</a>
     <a > {{session['username']}}</a>
     <a href={{ url_for('logout')}}>Logout</a>
 	{% else %}
 
+    <a class="active" href="#home">Home</a>
 	<a href={{url_for('index')}}>Register</a>
     <a href={{ url_for('login')}}>Login</a>
 	{% endif %}

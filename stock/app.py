@@ -163,6 +163,23 @@ def portfolio_contents():
 
     print("p_id",portfolio_id)
     return render_template('list_company.html',portfolio_id = portfolio_id,data =row)
+
+@app.route("/insert_cpn",methods = ['GET','POST'])
+def insert_cpn():
+    if 'logged' in session:
+        ticker = request.form['ticker']
+        portfolio_id = request.form['portfolio_id']
+        g.conn.execute('INSERT INTO has_a_list_of(portfolio_id,ticker) VALUES (%s,%s)',portfolio_id,ticker)
+        return redirect(url_for('portfolio'))
+
+@app.route("/add_company",methods = ['POST','GET'])
+def add_company():
+    print("hello")
+    portfolio_id = request.form['portfolio_id']
+    print(portfolio_id)
+    row = g.conn.execute('SELECT * FROM companies WHERE ticker NOT IN(SELECT ticker FROM has_a_list_of WHERE portfolio_id = %s)',portfolio_id)
+    return render_template("add_ticker.html",data=row,portfolio_id=portfolio_id)
+
 if __name__ == "__main__":
   import click
 

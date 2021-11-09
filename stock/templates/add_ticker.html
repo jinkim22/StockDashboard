@@ -1,14 +1,11 @@
 
+
 {% extends 'prelogin.html' %}
 
 
 {% block content %}
-<h2>Your Historical Data Page</h2>
-
-    <form action="/add_company" method="POST">
-	    <button type="submit" name="portfolio_id" value={{portfolio_id}} class="button button1">ADD A COMPANY TO YOUR LIST</button>
-	    <input type="hidden" name="{{portfolio_id}}" value="{{portfolio_id}}">
-    </form>
+<h2>Add a company to your portfolio</h2>
+ 
 
 
 <style>
@@ -58,6 +55,7 @@
   cursor: pointer;
 }
 
+
 .button1 {
   background-color: white; 
   color: black; 
@@ -91,22 +89,22 @@
         </tr>
     </thead>
     <tbody>
-	   {% for r in data %}
-	    <form>
+
+{% for r in data %}
+	    <form action="/insert_cpn" method="post">
         <tr class="active-row">
             <td><button type="submit" name="{{r['ticker']}}" class="button button1">{{r['ticker']}}</button></td>
-	    <td>{{r['stock_name']}}</td>
-	    <td>{{r['pe_ratio']}}</td>
-	    <td>{{r['number_of_shares_owned']}}</td>
-        </tr>
-     </form>
-      
+            <td>{{r['stock_name']}}</td>
+            <td>{{r['pe_ratio']}}</td>
+            <td>{{r['number_of_shares_owned']}}</td>
+	   <input name="ticker" type="hidden" value="{{r['ticker']}}">
+       	 
+	   <input name="portfolio_id" type="hidden" value="{{portfolio_id}}">
+	</tr>
+      </form> 
 {% endfor %}
     </tbody>
 </table>
-
-
-
 
 
 {% endblock content %}
