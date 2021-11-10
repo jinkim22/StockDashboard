@@ -76,6 +76,13 @@ def index():
 
   return render_template("index.html")
 
+@app.route('/signup')
+def signup():
+ 
+#  print(request.args)
+
+
+  return render_template("register.html")
 
 @app.route('/register', methods = ['POST'])
 def register():
@@ -88,7 +95,7 @@ def register():
     print(account)
     if account:
         flash("\nUsername exist!")
-        return redirect('/')
+        return redirect('/signup')
     elif password == password2:
         g.conn.execute('INSERT INTO traders(username,password) VALUES (%s,%s)',(username,password))
         return redirect(url_for('login'))
@@ -119,6 +126,7 @@ def login():
             session['logged'] = True
             session['id'] = account['id']
             session['username']= account['username']
+            session['trade_freq']=account['trade_freq']
             return redirect(url_for('portfolio'))
 
         #    return account['password']
@@ -156,29 +164,70 @@ def insertp():
         g.conn.execute('INSERT INTO portfolios(name,description,user_id) VALUES (%s,%s,%s)',(name,description,session['id']))
         return redirect(url_for('portfolio'))
 
-@app.route("/portfolio_contents", methods=['POST'])
+@app.route("/portfolio_contents", methods=['POST','GET'])
 def portfolio_contents():
-    portfolio_id = request.form['portfolio_id']
+     
+    if request.method == 'POST':
+        performance = request.form['performance']
+        pname = request.form['pname']
+        portfolio_id = request.form['portfolio_id']
+    else:
+        portfolio_id = session['pid']
+        pname = session['pname']
+        performance = session['performance']
     row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %s',portfolio_id)
-
-    print("p_id",portfolio_id)
-    return render_template('list_company.html',portfolio_id = portfolio_id,data =row)
+    row2 = g.conn.execute('SELECT * FROM has_a_history_of h LEFT JOIN transactions t ON h.transaction_id=t.transaction_id WHERE portfolio_id = %s',portfolio_id)
+    account = row.fetchone()   
+    print("performacne ", performance)
+    access = 1
+#    account = None
+    if account is None:
+        access = 0
+        print("emmty")
+    account2 = row2.fetchone()
+    access2 = 1
+    if account2 is None:
+        access2 = 0
+     #   print("access ",access2)
+  #  print("trans  :",account2['transaction_id'])
+    k = float(performance) 
+    print("k ",k)
+    row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %s',portfolio_id)
+    row2 = g.conn.execute('SELECT * FROM has_a_history_of h LEFT JOIN transactions t ON h.transaction_id=t.transaction_id WHERE portfolio_id = %s ORDER BY time DESC',portfolio_id)
+#    for r in row2:
+     #   print("trer ", r['ticker'])
+ #       print("transaction ", r['transaction_id'])
+#    print("p_id",portfolio_id)
+    return render_template('list_company.html',pname=pname,portfolio_id = portfolio_id,k=k,data =row,access=access,data2 = row2,access2 =access2, performance=performance )
 
 @app.route("/insert_cpn",methods = ['GET','POST'])
 def insert_cpn():
     if 'logged' in session:
         ticker = request.form['ticker']
         portfolio_id = request.form['portfolio_id']
+        pname = request.form['pname']
+        performance = request.form['performance']
+        session['pid'] = portfolio_id
+        session['pname'] = pname
+        session['performance'] = performance
         g.conn.execute('INSERT INTO has_a_list_of(portfolio_id,ticker) VALUES (%s,%s)',portfolio_id,ticker)
-        return redirect(url_for('portfolio'))
+        return redirect(url_for('portfolio_contents'))
 
 @app.route("/add_company",methods = ['POST','GET'])
 def add_company():
     print("hello")
     portfolio_id = request.form['portfolio_id']
     print(portfolio_id)
+    pname = request.form['pname']
+    performance = request.form['performance']
     row = g.conn.execute('SELECT * FROM companies WHERE ticker NOT IN(SELECT ticker FROM has_a_list_of WHERE portfolio_id = %s)',portfolio_id)
-    return render_template("add_ticker.html",data=row,portfolio_id=portfolio_id)
+    return render_template("add_ticker.html",data=row,portfolio_id=portfolio_id, performance=performance, pname=pname)
+
+@app.route("/price_history",methods = ['GET','POST'])
+def price_history():
+    ticker = request.form['ticker']
+    row = g.conn.execute('SELECT * FROM price_history WHERE ticker = %s ORDER BY time DESC',ticker)
+    return render_template("price_history.html",data = row)
 
 if __name__ == "__main__":
   import click

@@ -3,11 +3,37 @@
 
 
 {% block content %}
-<h2>Your Historical Data Page</h2>
+<body>
+	<h5>Currency in USD</h5>
+<div style="float:left; margin:2px">
+	<h2> Portfolio : {{pname}} &nbsp; </h2>
+</div>
+<div style="float:left; margin:2px">
+	<h2>&nbsp; Trader Performance :</h2>
+</div>
+
+<div style="float:left; margin:2px">
+{% if k >= 0 %}
+
+
+	<h2 style="color:green;">{{performance}}</h1>
+	{% else %}
+
+	<h2 style="color:red;">{{performance}}</h1>
+	{% endif %}
+</div>
+
+</body>
+<br style="clear:both" />
+<body>
+<h3>Your Historical Data Page</h2>
 
     <form action="/add_company" method="POST">
 	    <button type="submit" name="portfolio_id" value={{portfolio_id}} class="button button1">ADD A COMPANY TO YOUR LIST</button>
 	    <input type="hidden" name="{{portfolio_id}}" value="{{portfolio_id}}">
+    
+ 		<input id="performance" name="performance" type="hidden" value="{{performance}}" />
+	    <input type="hidden" name="pname" value="{{pname}}">
     </form>
 
 
@@ -17,7 +43,7 @@
     margin: 25px 0;
     font-size: 1em;
     font-family: sans-serif;
-    min-width: 400px;
+    min-width: 200px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 .styled-table thead tr {
@@ -27,7 +53,7 @@
 }
 .styled-table th,
 .styled-table td {
-    padding: 12px 35px;
+    padding: 10px 20px;
 }
 .styled-table tbody tr {
     border-bottom: 1px solid #dddddd;
@@ -48,7 +74,7 @@
 .button {
   border: none;
   color: white;
-  padding: 10px 32px;
+  padding: 6px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -81,23 +107,28 @@
 }
 </style>
 
+<div style="float:left; margin:15px">
+
+<h3>Companies added</h3>
+
+	{% if access == 1 %}
 <table class="styled-table">
     <thead>
         <tr>
             <th>Symbol</th>
             <th>Company Name</th>
             <th>P/E Ratio</th>
-            <th>Number of Shares Owned</th>
+            <th>Number of Shares Suggested</th>
         </tr>
     </thead>
     <tbody>
 	   {% for r in data %}
-	    <form>
+	    <form action="/price_history" method="post">
         <tr class="active-row">
-            <td><button type="submit" name="{{r['ticker']}}" class="button button1">{{r['ticker']}}</button></td>
+		<td><button type="submit" name="ticker" class="button button1" value="{{r['ticker']}}">{{r['ticker']}}</button></td>
 	    <td>{{r['stock_name']}}</td>
 	    <td>{{r['pe_ratio']}}</td>
-	    <td>{{r['number_of_shares_owned']}}</td>
+	    <td>{{r['number_of_shares_suggested']}}</td>
         </tr>
      </form>
       
@@ -105,8 +136,46 @@
     </tbody>
 </table>
 
+{% else %}
+<h1>List is empty</h1>
+	    {% endif %}
+</div>
 
+<div style="float:left; margin:15px">
+	<h3>Transaction History</h3>
+	{% if access2 == 1 %}
+<table class="styled-table">
+    <thead>
+	    <tr>
 
+	    <th>Transaction ID</th>
+            <th>Is Buying</th>
+            <th>Time</th>
+	    <th>SYMBOL</td>
+	    <th>Last Price</td>
+            <th>Number of Shares</th>
+        </tr>
+    </thead>
+    <tbody>
+	   {% for r in data2 %}
+	    <form>
+        <tr class="active-row">
+	    <td>{{r['transaction_id']}}</td>
+	    <td>{{r['is_buying']}}</td>
+	    <td>{{r['time']}}</td>
+	    <td>{{r['ticker']}}</td>
+	    <td>{{r['last_price']}}</td>
+	    <td>{{r['number_of_shares']}}</td>
+        </tr>
+     </form>
+      
+{% endfor %}
 
-
+    </tbody>
+</table>
+{% else %}
+<h1>No transaction found</h1>
+	    {% endif %}
+</div>
+</body>
 {% endblock content %}

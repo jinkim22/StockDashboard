@@ -3,7 +3,10 @@
 
 
 {% block content %}
-<h4> This is portfolio </h4>
+
+<h1>Welcome to StockDashboard, {{session['username']}}</h1>
+<h3> Your Trade Frequency : {{session['trade_freq']}}</h3>
+<h4> This is portfolio : </h4>
 
 
 <style>
@@ -76,6 +79,8 @@ input[type=submit]:hover {
 <p>{{d['description']}}</p>
 <input id="open" name="open" type="submit" value="Open" />
 <input id="port_contents" name="portfolio_id" type="hidden" value="{{d.portfolio_id}}" />
+<input id="pnanme" name="pname" type="hidden" value="{{d.name}}" />
+<input id="performance" name="performance" type="hidden" value="{{d.trader_performance}}" />
 </div>
 </form>
 {% endfor %}

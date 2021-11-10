@@ -4,17 +4,13 @@
 
 
 {% block content %}
-<h2>Add a company to your portfolio</h2>
- 
-
-
 <style>
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 1em;
     font-family: sans-serif;
-    min-width: 400px;
+    min-width: 200px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 .styled-table thead tr {
@@ -24,7 +20,7 @@
 }
 .styled-table th,
 .styled-table td {
-    padding: 12px 35px;
+    padding: 10px 20px;
 }
 .styled-table tbody tr {
     border-bottom: 1px solid #dddddd;
@@ -45,7 +41,7 @@
 .button {
   border: none;
   color: white;
-  padding: 10px 32px;
+  padding: 6px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -55,57 +51,47 @@
   cursor: pointer;
 }
 
-
 .button1 {
-  background-color: white; 
-  color: black; 
+  background-color: white;
+  color: black;
   border: 2px solid #4CAF50;
 }
-
 .button1:hover {
   background-color: #4CAF50;
   color: white;
 }
-
 .button2 {
-  background-color: white; 
-  color: black; 
+  background-color: white;
+  color: black;
   border: 2px solid #008CBA;
 }
-
 .button2:hover {
   background-color: #008CBA;
   color: white;
 }
 </style>
-
+<div style="float:left; margin:15px">
+<h2>Price history</h2>
 <table class="styled-table">
     <thead>
         <tr>
             <th>Symbol</th>
-            <th>Company Name</th>
-            <th>P/E Ratio</th>
-            <th>Number of Shares Owned</th>
+            <th>Interval</th>
+            <th>Time</th>
+            <th>Prices</th>
         </tr>
     </thead>
     <tbody>
-
-{% for r in data %}
-	    <form action="/insert_cpn" method="post">
+           {% for r in data %}
         <tr class="active-row">
-            <td><button type="submit" name="{{r['ticker']}}" class="button button1">{{r['ticker']}}</button></td>
-            <td>{{r['stock_name']}}</td>
-            <td>{{r['pe_ratio']}}</td>
-            <td>{{r['number_of_shares_owned']}}</td>
-	   <input name="ticker" type="hidden" value="{{r['ticker']}}">
- 	   <input id="performance" name="performance" type="hidden" value="{{performance}}" />
-	   <input name="pname" type="hidden" value="{{pname}}">
-	   <input name="portfolio_id" type="hidden" value="{{portfolio_id}}">
-	</tr>
-      </form> 
+	    <td>{{r['ticker']}}</td>
+            <td>{{r['interval']}}</td>
+            <td>{{r['time']}}</td>
+            <td>{{r['prices']}}</td>
+        </tr>
 {% endfor %}
     </tbody>
 </table>
 
 
-{% endblock content %}
+{% endblock content %} 
