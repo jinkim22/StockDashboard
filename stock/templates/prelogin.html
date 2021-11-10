@@ -72,7 +72,7 @@ body {
     <a href={{ url_for('logout')}}>Logout</a>
 	{% else %}
 
-    <a class="active" href="#home">Home</a>
+	<a class="active" href="{{url_for('index')}}">Home</a>
 	<a href={{url_for('signup')}}>Register</a>
     <a href={{ url_for('login')}}>Login</a>
 	{% endif %}

@@ -2,51 +2,57 @@
 
 
 {% block content %}
-<body>
-      {% for mesg in get_flashed_messages() %}
-      <h1>{{ mesg }}</script></h1>
-      {% endfor %}
-    </body>
+	<!DOCTYPE html>
+<html>
 <head>
-		<script>
-		
-			// Function to check Whether both passwords
-			// is same or not.
-			function checkPassword(form) {
-				password1 = form.password.value;
-				password2 = form.password2.value;
+<style>
+h1 { color: #7c795d; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 0; }
+
+
+h2 { color: #7c795d; font-family: 'Source Sans Pro', sans-serif; font-size: 20px; font-weight: 400; line-height: 32px; margin: 0 0 24px; }
+
+
+.subheader { font-size: 26px; font-weight: 300; color: #ffcc66; margin: 0 0 24px; }
+
+
+p { color: #4c4a37; font-family: 'Source Sans Pro', sans-serif; font-size: 18px; line-height: 32px; margin: 0 0 24px; }
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+
+}
+</style>
+</head>
+<body>
+	<br>
+	<br>
+	<br>
+<h1 style="text-align:center">Your Stock Analysis Platform</h2>
+<br>
+
+<h2 style="text-align:center">Sign up for an account, and save your favorite Stock companies using our <br> StockDashboard.
+</h2>
+<div style="text-align:center">
+	<form action="{{url_for('signup')}}">
+	<button class="button" type="submit">Join us!</button>
+	</form>
+<br>
+<br>
+<p>Already have an account ? <a href="{{url_for('login')}}"> LOG IN</a> </p>
+</body>
+</html>
 	
-					
-				// If Not same return False.	
-				if (password1 != password2) {
-					alert ("\nPassword did not match: Please try again...")
-					return false;
-				}
-
-				// If same return True.
-				else{
-					alert("Password Match: Welcome to GeeksforGeeks!")
-					return true;
-				}
-			}
-		</script>
-		
-	</head>
-	<body>
-
-		<h3>Registration</h3>
-<form onSubmit = "return checkPassword(this)" action="/register" method="POST" class="form--inline">
-
-    <p><label for="user">Username : </label><input type="text" name="firstn" size="20"></p>
-
-    <p><label for="password">Password          :</label><input type="password" name="password" size="20" required></p>
-    <p><label for="password2">Confirm Password :</label><input type="password" name="password2" size="20" required></p>
-
-    <p><input type="submit" name="submit" value="Create Account" class="button--pill"></p>
-
-</form>
-
-	</body>
+	
+	
 		
 
 {% endblock %}
