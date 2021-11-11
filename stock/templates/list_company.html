@@ -41,7 +41,7 @@
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
-    font-size: 1em;
+    font-size: 0.8em;
     font-family: sans-serif;
     min-width: 200px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -98,11 +98,11 @@
 .button2 {
   background-color: white; 
   color: black; 
-  border: 2px solid #008CBA;
+  border: 2px solid #BA2E00;
 }
 
 .button2:hover {
-  background-color: #008CBA;
+  background-color: #BA2E00;
   color: white;
 }
 </style>
@@ -118,18 +118,28 @@
             <th>Symbol</th>
             <th>Company Name</th>
             <th>P/E Ratio</th>
-            <th>Number of Shares Suggested</th>
-        </tr>
+            <th>No. Shares Suggested</th>
+       	    <th>Allocation Suggested</th>
+	    <th>Remove</th>
+	</tr>
     </thead>
     <tbody>
 	   {% for r in data %}
 	    <form action="/price_history" method="post">
         <tr class="active-row">
 		<td><button type="submit" name="ticker" class="button button1" value="{{r['ticker']}}">{{r['ticker']}}</button></td>
-	    <td>{{r['stock_name']}}</td>
+	    </form>
+		<td>{{r['stock_name']}}</td>
 	    <td>{{r['pe_ratio']}}</td>
 	    <td>{{r['number_of_shares_suggested']}}</td>
-        </tr>
+            <td>{{('%0.2f'|format(r['allocation']|float))|string ~ "%"}}</td> 
+
+	    <form action="/remove_cpn" method="post">
+          	 <input id="performance" name="performance" type="hidden" value="{{performance}}" /> 
+          	 <input name="pname" type="hidden" value="{{pname}}"> 
+		<input type="hidden" name="portfolio_id" value="{{portfolio_id}}" />
+		<td><button type="submit" name="ticker" class="button button2" value="{{r['ticker']}}">Remove</button></td>
+	</tr>
      </form>
       
 {% endfor %}
@@ -153,7 +163,7 @@
             <th>Time</th>
 	    <th>SYMBOL</td>
 	    <th>Last Price</td>
-            <th>Number of Shares</th>
+            <th># of Shares</th>
         </tr>
     </thead>
     <tbody>
@@ -166,6 +176,7 @@
 	    <td>{{r['ticker']}}</td>
 	    <td>{{r['last_price']}}</td>
 	    <td>{{r['number_of_shares']}}</td>
+	   
         </tr>
      </form>
       
