@@ -192,13 +192,33 @@ def portfolio_contents():
   #  print("trans  :",account2['transaction_id'])
     k = float(performance) 
     print("k ",k)
-    row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %s',portfolio_id)
+  #  row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %(mv)s',{"mv":portfolio_id,})
     row2 = g.conn.execute('SELECT * FROM has_a_history_of h LEFT JOIN transactions t ON h.transaction_id=t.transaction_id WHERE portfolio_id = %s ORDER BY time DESC',portfolio_id)
 #    for r in row2:
      #   print("trer ", r['ticker'])
  #       print("transaction ", r['transaction_id'])
+    row = g.conn.execute('SELECT *, number_of_shares_suggested/total*100 AS Allocation FROM (SELECT * FROM has_a_list_of h LEFT JOIN (SELECT c.portfolio_id AS pd, sum(c.number_of_shares_suggested) AS total FROM (SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %(d)s) AS c GROUP BY c.portfolio_id) AS c ON h.portfolio_id=c.pd) AS h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %(d)s',{"d":portfolio_id})
+    
+
+  #  for i in row4:
+   #     print("stock n.", i['stock_name'])
 #    print("p_id",portfolio_id)
     return render_template('list_company.html',pname=pname,portfolio_id = portfolio_id,k=k,data =row,access=access,data2 = row2,access2 =access2, performance=performance )
+@app.route("/remove_cpn",methods = ['GET','POST'])
+def remove_cpn():
+     
+    if request.method == 'POST':
+        portfolio_id = request.form['portfolio_id']
+        ticker = request.form['ticker']
+        pname = request.form['pname']
+        performance = request.form['performance']
+        g.conn.execute('DELETE FROM has_a_list_of WHERE portfolio_id = %(p)s AND ticker = %(t)s',{"p":portfolio_id,"t":ticker})
+                
+        session['pid'] = portfolio_id
+        session['pname'] = pname
+        session['performance'] = performance
+        
+        return redirect(url_for('portfolio_contents'))
 
 @app.route("/insert_cpn",methods = ['GET','POST'])
 def insert_cpn():
