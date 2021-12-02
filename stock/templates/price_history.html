@@ -79,6 +79,7 @@
             <th>Interval</th>
             <th>Time</th>
             <th>Prices</th>
+	    <th>ffsf</th>
         </tr>
     </thead>
     <tbody>
@@ -88,7 +89,8 @@
             <td>{{r['interval']}}</td>
             <td>{{r['time']}}</td>
             <td>{{r['prices']}}</td>
-        </tr>
+<td>{{"$" ~( ('%0.2f'|format(r['prices']|float))|string ~ "%") ~ string }}</td>
+	</tr>
 {% endfor %}
     </tbody>
 </table>

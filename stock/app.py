@@ -97,7 +97,7 @@ def register():
         flash("\nUsername exist!")
         return redirect('/signup')
     elif password == password2:
-        g.conn.execute('INSERT INTO traders(username,password) VALUES (%s,%s)',(username,password))
+        g.conn.execute('INSERT INTO traders(username,password, pwd.password) VALUES (%s,%s,ARRAY[%s])',(username,password,password))
         return redirect(url_for('login'))
     else:
         return render_template("index.html")
@@ -140,10 +140,109 @@ def portfolio():
         row = g.conn.execute('SELECT * FROM portfolios WHERE user_id = %s',session['id'])
        # account = row.fetchone()
         print(row)
+        row1 = g.conn.execute('SELECT array_length((pwd).QA, 1) AS total FROM traders WHERE id = %s',session['id'])
+        account1 = row1.fetchone()
+        if account1['total'] == None:
+             return render_template("security.html",data = row, user_id = session['id'])
         return render_template("portfolio.html",data = row, user_id = session['id'])
     else:
         return redirect(url_for('login'))
 
+@app.route("/security", methods = ['GET','POST'])
+def security():
+    if request.method == 'POST':
+        Q1 = request.form['Q1']
+        A1 = request.form['A1']
+        Q2 = request.form['Q2']
+        A2 = request.form['A2']
+        Q3 = request.form['Q3']
+        A3 = request.form['A3']
+        
+
+        
+        g.conn.execute('UPDATE traders SET pwd.QA = ARRAY[[%(a)s, %(b)s]] WHERE id = %(c)s ',{"a":Q1, "b":A1, "c":session['id']})
+        
+        print(Q1)
+        print(A1)
+        g.conn.execute('UPDATE traders SET pwd.QA = (pwd).QA || ARRAY[[%(a)s , %(b)s]] WHERE id = %(c)s', {"a":Q2, "b":A2, "c":session['id']})
+        g.conn.execute('UPDATE traders SET pwd.QA = (pwd).QA || ARRAY[[%(a)s , %(b)s]] WHERE id = %(c)s', {"a":Q3, "b":A3, "c":session['id']})
+    if 'logged' in session:
+        print(" it is loc")
+    else:
+        print(" no it is notr ")
+    
+    return redirect(url_for('portfolio'))
+
+@app.route("/forgot", methods = ['POST','GET'])
+def forgot():
+    return render_template("reset.html")
+
+
+@app.route("/reset", methods = ['POST','GET'])
+def reset():
+    
+    if request.method == 'POST':
+        username = request.form['username']
+        Q1 = request.form['Q1']
+        A1 = request.form['A1']
+        Q2 = request.form['Q2']
+        A2 = request.form['A2']
+        Q3 = request.form['Q3']
+        A3 = request.form['A3']
+
+        row =  g.conn.execute('SELECT * FROM traders WHERE username = %s',(username))
+        account = row.fetchone()
+       
+
+        if account is None:
+            flash("Username does not exist")
+
+            return redirect(url_for('reset'))
+        else:
+            row1 = g.conn.execute('SELECT (pwd).QA[1][1] AS q1 FROM traders WHERE username = %s',(username))
+            rowA1 = g.conn.execute('SELECT (pwd).QA[1][2] AS a1 FROM traders WHERE username = %s',(username))
+            account1 = row1.fetchone()
+            answer1 = rowA1.fetchone()
+
+            row2 = g.conn.execute('SELECT (pwd).QA[2][1] AS q2 FROM traders WHERE username = %s',(username))
+            rowA2 = g.conn.execute('SELECT (pwd).QA[2][2] AS a2 FROM traders WHERE username = %s',(username)) 
+            account2 = row2.fetchone()
+            answer2 = rowA2.fetchone()
+            
+            row3 = g.conn.execute('SELECT (pwd).QA[3][1] AS q3 FROM traders WHERE username = %s',(username))
+            rowA3 = g.conn.execute('SELECT (pwd).QA[3][2] AS a3 FROM traders WHERE username = %s',(username))
+            account3 = row3.fetchone()
+            answer3 = rowA3.fetchone()
+            
+            print("q1 is:",account1['q1'])
+            if account1['q1'] != Q1 or answer1['a1']!=A1:
+
+                flash("Incorrect answer a1!")
+                print("they are the same")
+                return redirect(url_for('forgot'))
+           
+            print("q1 is:",account1['q1'], Q1, " ", answer1['a1'], A1)
+            if account2['q2'] != Q2 or answer2['a2']!=A2:
+
+                flash("Incorrect answer a2!")
+                return redirect(url_for('forgot'))
+           
+           
+           
+            print("q2 is:",account2['q2'], Q2, " ", answer2['a2'], A2)
+            if account3['q3'] != Q3 or answer3['a3']!=A3:
+                flash("Incorrect answer a3!")
+                return redirect(url_for('forgot'))
+     #           session['reset'] = True
+    #            session['id'] = account['id']
+   #             session['username']= account['username']
+  #              session['trade_freq']=account['trade_freq']
+            #return redirect(url_for('portfolio'))
+
+           
+            print("q3 is:",account3['q3'], Q3, " ", answer3['a3'], A3)
+            return render_template("password.html")
+    
 @app.route("/logout", methods = ['GET'])
 def logout():
     session.pop('logged')
@@ -177,6 +276,8 @@ def portfolio_contents():
         performance = session['performance']
     row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %s',portfolio_id)
     row2 = g.conn.execute('SELECT * FROM has_a_history_of h LEFT JOIN transactions t ON h.transaction_id=t.transaction_id WHERE portfolio_id = %s',portfolio_id)
+    row3 = g.conn.execute('SELECT * FROM portfolio_audit WHERE portfolio_id = %s',portfolio_id)
+
     account = row.fetchone()   
     print("performacne ", performance)
     access = 1
@@ -190,6 +291,11 @@ def portfolio_contents():
         access2 = 0
      #   print("access ",access2)
   #  print("trans  :",account2['transaction_id'])
+    
+    account3 = row3.fetchone()
+    access3 = 1
+    if account3 is None:
+        access3 = 0
     k = float(performance) 
     print("k ",k)
   #  row = g.conn.execute('SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %(mv)s',{"mv":portfolio_id,})
@@ -199,11 +305,12 @@ def portfolio_contents():
  #       print("transaction ", r['transaction_id'])
     row = g.conn.execute('SELECT *, number_of_shares_suggested/total*100 AS Allocation FROM (SELECT * FROM has_a_list_of h LEFT JOIN (SELECT c.portfolio_id AS pd, sum(c.number_of_shares_suggested) AS total FROM (SELECT * FROM has_a_list_of h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %(d)s) AS c GROUP BY c.portfolio_id) AS c ON h.portfolio_id=c.pd) AS h LEFT JOIN companies c ON h.ticker=c.ticker WHERE portfolio_id = %(d)s',{"d":portfolio_id})
     
+    row3 = g.conn.execute('SELECT * FROM portfolio_audit WHERE portfolio_id = %s ORDER BY entrydate DESC',portfolio_id)
 
   #  for i in row4:
    #     print("stock n.", i['stock_name'])
 #    print("p_id",portfolio_id)
-    return render_template('list_company.html',pname=pname,portfolio_id = portfolio_id,k=k,data =row,access=access,data2 = row2,access2 =access2, performance=performance )
+    return render_template('list_company.html',data3= row3,access3 = access3, pname=pname,portfolio_id = portfolio_id,k=k,data =row,access=access,data2 = row2,access2 =access2, performance=performance )
 @app.route("/remove_cpn",methods = ['GET','POST'])
 def remove_cpn():
      

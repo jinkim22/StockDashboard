@@ -1,0 +1,49 @@
+{% extends 'prelogin.html' %}
+
+
+{% block content %}
+
+<html>
+<body>
+
+<h1>Update your security questions</h1>
+
+<p>In case you forget your password</p>
+
+<form action="/security" method="POST">
+  <label for="cars">Question 1:</label>
+  <select name="Q1" id="Q1">
+    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+    <option value="What is the name of your first pet?">What is the name of your first pet?</option>
+    <option value="What was your first car?">What was your first car?</option>
+  </select>
+  <br><br>
+    <label for="fname">Answer 1:</label>
+  <input type="text" id="A1" name="A1" required><br><br><br>
+    <label for="cars">Question 2:</label>
+  <select name="Q2" id="Q2">
+    <option value="What elementary school did you attend?">What elementary school did you attend?</option>
+    <option value="What is the name of the town where you were born?">What is the name of the town where you were born?</option>
+    <option value="What is your favorite color?">What is your favorite color?</option>
+  </select>
+  <br><br>
+    <label for="fname">Answer 2:</label>
+  <input type="text" id="A2" name="A2" required><br><br><br>
+    <label for="cars">Question 3:</label>
+  <select name="Q3" id="Q3">
+    <option value="What was your favorite subject in high school?">What was your favorite subject in high school?</option>
+    <option value="What is your employee ID number?">What is your employee ID number?</option>
+    <option value="what color is your car?">what color is your car?</option>
+  </select>
+  <br><br>
+    <label for="fname">Answer 3:</label>
+  <input type="text" id="A3" name="A3" required><br><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+<p>Click the "Submit" button and you will be redirect to the portfolio page.</p>
+
+</body>
+</html>
+
+{% endblock %}
